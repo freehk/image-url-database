@@ -16,6 +16,7 @@ phash: str
 thumbnail_url: str
 url: str
 alt: str
+description: str
 tags: array
 source: str
 date_of_event: datetime
