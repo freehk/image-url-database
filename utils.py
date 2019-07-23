@@ -20,9 +20,9 @@ def read_phashes(hashes_path):
     return hashes
 
 
-def write_hashes(existing_hashes, hashes_path):
-    with open(hashes_path, 'w') as outfile:
-        outfile.writelines("%s\n" % place for place in existing_hashes)
+def write_hash(hash, hashes_path):
+    with open(hashes_path, 'a') as outfile:
+        outfile.write("%s\n" % hash)
 
 
 def calculate_hash(thumbnail, hash_type):
