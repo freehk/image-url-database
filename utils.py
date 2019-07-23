@@ -23,7 +23,6 @@ def read_phashes(hashes_path):
 def write_hashes(existing_hashes, hashes_path):
     with open(hashes_path, 'w') as outfile:
         outfile.writelines("%s\n" % place for place in existing_hashes)
-        outfile.writelines(existing_hashes)
 
 
 def calculate_hash(thumbnail, hash_type):
@@ -31,9 +30,9 @@ def calculate_hash(thumbnail, hash_type):
         return str(imagehash.phash(thumbnail))
 
 
-def upload_to_imgur(image, image_type):
+def upload_to_imgur(image, image_type, client_id):
     # Dirty
-    headers = {"Authorization": "Client-ID {}".format(CLIENT_ID)}
+    headers = {"Authorization": "Client-ID {}".format(client_id)}
     if image_type == "base64":
         with open(image, 'rb') as image_file:
             binary_data = image_file.read()
@@ -48,3 +47,8 @@ def upload_to_imgur(image, image_type):
         return response.json()
     else:
         print(response.content)
+
+
+def check_output_path(output_path):
+    if os.path.isfile(output_path):
+        raise Exception("output_path already exists, please choose a different one to avoid overwriting")

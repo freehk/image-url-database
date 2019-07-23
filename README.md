@@ -9,7 +9,7 @@ The current plan is to
 1. save the resulting url and all the metadata in a json
 1. send this to a database (e.g. faunadb) queryable by the website
 
-## Data format
+## Data schema
 ```
 ID: int
 phash: str
@@ -27,3 +27,19 @@ date_modified: datetime
 ```
 
 with indices on phash, tags, and dates.
+
+## Environment
+```bash
+conda env create -f environment.yml
+```
+
+## How to upload a json of urls to imgur
+```commandline
+export CLIENT_ID={{your imgur client id}}
+python imgur_upload_from_links.py --input_path sample_input.json --output_path out.json --hashes_path new_hashes.txt
+```
+You should see your output in `out.json` and the hashes in `new_hashes.txt`
+
+The hashes prevent you from uploading to imgur again. 
+
+And... because it's written in a hurry, there will be a stray `thumbnail.jpg` lying in your dir after running. 
