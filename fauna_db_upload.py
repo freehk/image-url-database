@@ -39,7 +39,7 @@ def main(json_path):
     client.query(
         q.map_expr(
             lambda x: q.create(
-                q.collection("todos"),
+                q.collection("freehongkong-gallery"),
                 {"data": x}
             ),
             data))

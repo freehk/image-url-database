@@ -27,7 +27,11 @@ def create_thumbnail(url):
     response = requests.get(url)
     im = Image.open(BytesIO(response.content))
     im.thumbnail(THUMBNAIL_SIZE)
-    im.save("thumbnail.jpg")
+    try:
+        im.save("thumbnail.jpg")
+    except:
+        im = im.convert("RGB")
+        im.save("thumbnail.jpg")
     return im
 
 
@@ -61,6 +65,7 @@ def main(input_path, output_path, hashes_path):
                 })
                 result.append(image)
         except Exception as e:
+            print(image['url'])  # do it manually for now.
             print(e)
     write_result_to_json(result, output_path)
 
