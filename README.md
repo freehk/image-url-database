@@ -11,14 +11,13 @@ The current plan is to
 
 ## Data schema
 ```
-ID: int
 phash: str
 thumbnail_url: str
 url: str
 alt: str
 description: str
 tags: array
-source: str
+source_url: str
 date_of_event: datetime
 type: enum[image, video]
 language: str
@@ -43,3 +42,10 @@ You should see your output in `out.json` and the hashes in `new_hashes.txt`
 The hashes prevent you from uploading to imgur again. 
 
 And... because it's written in a hurry, there will be a stray `thumbnail.jpg` lying in your dir after running. 
+
+## How to upload that output json to faunadb
+```commandline
+export FAUNADB_SERVER_SECRET={{your faunadb server secret}}
+python fauna_db_upload.py --json_path sample_output.json
+```
+you should see the data in the fauna dashboard
