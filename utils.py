@@ -42,7 +42,7 @@ def upload_to_imgur(image, image_type, client_id):
         payload = {"image": image, "type": image_type}
     else:
         raise Exception("Unexpected type")
-    response = requests.post("https://api.imgur.com/3/image", params=payload, headers=headers)
+    response = requests.post("https://api.imgur.com/3/image", data=payload, headers=headers)
     if response.status_code == 200:
         return response.json()
     else:
