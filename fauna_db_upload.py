@@ -45,5 +45,22 @@ def main(json_path):
             data))
 
 
+def update_tags():
+    client = FaunaClient(secret=FAUNADB_SECRET)
+    response = client.query(q.paginate(q.difference(q.match(q.ref("indexes/tags_freehongkong-gallery"), "all"),
+                                                    q.match(q.ref("indexes/tags_freehongkong-gallery"),
+                                                            "design material"))))
+
+    client.query(
+        q.map_expr(
+            lambda x: q.update(
+                x,
+                {"data": {"tags": ["all", "photo"]}}
+            ),
+            response['data']
+        )
+    )
+
+
 if __name__ == '__main__':
     main()
