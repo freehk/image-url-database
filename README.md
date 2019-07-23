@@ -37,7 +37,7 @@ conda env create -f environment.yml
 export CLIENT_ID={{your imgur client id}}
 python imgur_upload_from_links.py --input_path sample_input.json --output_path out.json --hashes_path new_hashes.txt
 ```
-You should see your output in `out.json` and the hashes in `new_hashes.txt`
+You should see your output in `out.json` and the hashes in `new_hashes.txt`. Omit output_path and the generated json would be based on datetime
 
 The hashes prevent you from uploading to imgur again. 
 

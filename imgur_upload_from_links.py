@@ -1,3 +1,5 @@
+import datetime
+
 import click
 import json
 import os
@@ -34,27 +36,33 @@ def create_thumbnail(url):
 @click.option("--output_path", type=click.Path())
 @click.option("--hashes_path", type=click.Path(), default="hashes.txt")
 def main(input_path, output_path, hashes_path):
+    if not output_path:
+        output_path = str(datetime.datetime.now()) + '.json'
     images = read_image_source(input_path)
     existing_hash = read_phashes(hashes_path)
     check_output_path(output_path)
+    result = []
 
     for image in tqdm(images):
-        thumbnail = create_thumbnail(image['url'])
-        hash = calculate_hash(thumbnail, HASH_TYPE)
-        if hash in existing_hash:
-            print("skipping a file")
-        else:
-            existing_hash.add(hash)
-            response_thumbnail = upload_to_imgur("thumbnail.jpg", image_type="base64", client_id=CLIENT_ID)
-            response_image = upload_to_imgur(image['url'], image_type="url", client_id=CLIENT_ID)
-            image.update(**{
-                HASH_TYPE: hash,
-                "response_thumbnail": response_thumbnail,
-                "response_image": response_image
-            })
-
-    write_result_to_json(images, output_path)
-    write_hashes(existing_hash, hashes_path)
+        try:
+            thumbnail = create_thumbnail(image['url'])
+            hash = calculate_hash(thumbnail, HASH_TYPE)
+            if hash in existing_hash:
+                print("skipping a file")
+            else:
+                existing_hash.add(hash)
+                write_hashes(existing_hash, hashes_path)  # TODO rewrite everything, should just append
+                response_thumbnail = upload_to_imgur("thumbnail.jpg", image_type="base64", client_id=CLIENT_ID)
+                response_image = upload_to_imgur(image['url'], image_type="url", client_id=CLIENT_ID)
+                image.update(**{
+                    HASH_TYPE: hash,
+                    "response_thumbnail": response_thumbnail,
+                    "response_image": response_image
+                })
+                result.append(image)
+        except Exception as e:
+            print(e)
+    write_result_to_json(result, output_path)
 
 
 if __name__ == '__main__':

@@ -46,7 +46,7 @@ def upload_to_imgur(image, image_type, client_id):
     if response.status_code == 200:
         return response.json()
     else:
-        print(response.content)
+        raise Exception(response.content)
 
 
 def check_output_path(output_path):
