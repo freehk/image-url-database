@@ -1,35 +1,17 @@
-import datetime
 import os
 
-import pytz
 from faunadb import query as q
 from faunadb.client import FaunaClient
 
 FAUNADB_SECRET = os.environ.get("FAUNADB_SERVER_SECRET")
 
 
-def format_data(data):
-    return {
-        "phash": data['phash'],
-        "thumbnail_url": data['response_thumbnail']['data']['link'],
-        "url": data['response_image']['data']['link'],
-        "source_url": data['url'],
-        "tags": ['all'],
-        "date_added": pytz.utc.localize(datetime.datetime.utcnow()),
-        "date_modified": pytz.utc.localize(datetime.datetime.utcnow())
-    }
-
-
-def upload_to_fauna(query):
+def upload_to_fauna(data):
     client = FaunaClient(secret=FAUNADB_SECRET)
 
-    client.query(
-        q.map_expr(
-            lambda x: q.create(
-                q.collection("freehongkong-gallery"),
-                {"data": x}
-            ),
-            query))
+    client.query(q.create(
+        q.collection("freehongkong-gallery"), {"data": data}
+    ))
 
 
 def update_tags():
@@ -50,10 +32,11 @@ def update_tags():
 
 
 def query_fauna_for_hashes(tags):
+    # TODO this part is hacky, might break at some point.
     if "design material" in tags:
         tag = "design material"
     else:
-        tag = "photo"
+        tag = "all"
     client = FaunaClient(secret=FAUNADB_SECRET)
     data = client.query(q.paginate(q.match(q.ref("indexes/tags_freehongkong-gallery"), tag)))['data']
     response = client.query(q.map_expr(
