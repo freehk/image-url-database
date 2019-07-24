@@ -1,4 +1,5 @@
 import datetime
+from flask import Flask, request, jsonify
 import logging
 
 import pytz
@@ -9,6 +10,8 @@ from utils.imgur import query_imgur_by_tags, create_thumbnail, calculate_hash, u
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
 
 
 def format_response(response):
@@ -67,8 +70,14 @@ def sync_by_tags(tags):
         existing_hashes.add(phash)
     logger.info(
         "sync process completed, {} uploaded, {} skipped because of duplicates\n".format(total_num - skipped, skipped))
+    return total_num, skipped
+
+
+@app.route('/sync', methods=['PUT'])
+def main():
+    sync_by_tags(["design material"])
+    sync_by_tags([])
 
 
 if __name__ == '__main__':
-    sync_by_tags(["design material"])
-    sync_by_tags([])
+    app.run()
