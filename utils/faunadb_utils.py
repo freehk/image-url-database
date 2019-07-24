@@ -1,10 +1,7 @@
 import datetime
-import json
 import os
 
-import click
 import pytz
-
 from faunadb import query as q
 from faunadb.client import FaunaClient
 
@@ -23,17 +20,7 @@ def format_data(data):
     }
 
 
-def get_data_from_json(json_path):
-    with open(json_path) as json_file:
-        data = json.load(json_file)
-        formatted_data = [format_data(d) for d in data]
-    return formatted_data
-
-
-@click.command()
-@click.option("--json_path", type=click.Path(exists=True))
-def main(json_path):
-    data = get_data_from_json(json_path)
+def upload_to_fauna(query):
     client = FaunaClient(secret=FAUNADB_SECRET)
 
     client.query(
@@ -42,7 +29,7 @@ def main(json_path):
                 q.collection("freehongkong-gallery"),
                 {"data": x}
             ),
-            data))
+            query))
 
 
 def update_tags():
@@ -62,5 +49,18 @@ def update_tags():
     )
 
 
-if __name__ == '__main__':
-    main()
+def query_fauna_for_hashes(tags):
+    if "design material" in tags:
+        tag = "design material"
+    else:
+        tag = "photo"
+    client = FaunaClient(secret=FAUNADB_SECRET)
+    data = client.query(q.paginate(q.match(q.ref("indexes/tags_freehongkong-gallery"), tag)))['data']
+    response = client.query(q.map_expr(
+        lambda x: q.get(x),
+        data
+    ))
+
+    hashes = [el['data']['phash'] for el in response]
+
+    return set(hashes)
