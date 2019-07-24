@@ -75,8 +75,17 @@ def sync_by_tags(tags):
 
 @app.route('/sync', methods=['PUT'])
 def main():
-    sync_by_tags(["design material"])
-    sync_by_tags([])
+    result_1 = sync_by_tags(["design material"])
+    result_2 = sync_by_tags([])
+    return jsonify({'message': {'design material': {'total_num': result_1[0],
+                                                    'skipped': result_1[1]},
+                                'others': {'total_num': result_2[0],
+                                           'skipped': result_2[1]}}})
+
+
+@app.route('/status', methods=['GET'])
+def status():
+    return jsonify({'message': 'service active'})
 
 
 if __name__ == '__main__':
