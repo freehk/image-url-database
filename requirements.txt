@@ -7,7 +7,7 @@ gunicorn==19.9.0
 ImageHash==4.0
 iso8601==0.1.12
 itsdangerous==0.24
-Jinja2==2.9.6
+Jinja2==2.11.3
 MarkupSafe==1.0
 numpy==1.16.4
 olefile==0.44
